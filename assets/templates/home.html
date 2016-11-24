@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="text-center">Enter Player Name</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-offset-3 col-md-6">
+      <form name="addName" role="form" ng-submit="go('/play')">
+        <div class="form-group">
+          <div class="input-group">
+
+              <input type="text" class="form-control" placeholder="Enter your name" required ng-model="name">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-success" ng-disabled="!addName.$valid">Go</button>
+              </span>
+
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

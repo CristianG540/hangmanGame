@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="jumbotron">
+      <h1 align="center">Add new words</h1>
+      <br>
+      <div id="todo-form" class="row">
+        <div class="col-sm-8 col-sm-offset-2 text-center">
+          <form name="createWord" role="form" ng-submit="create()">
+            <div class="form-group">
+                <input type="text" class="form-control input-lg text-center" placeholder="Add Word!" required ng-model="word.value">
+                <br>
+                <button type="submit" class="btn btn-primary btn-lg" ng-disabled="!createWord.$valid">Add word</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="lead list-unstyled text-center">
+          <li class="words-item" ng-repeat="w in words">
+            <span class="glyphicon glyphicon-star" aria-hidden="true"></span> {{ w.value }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
