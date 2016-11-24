@@ -17,6 +17,10 @@
         templateUrl : 'templates/add-word.html',
         controller  : 'addWordCtrl'
       })
+      .when('/leaderboard', {
+        templateUrl : 'templates/leader.html',
+        controller  : 'leaderBoardCtrl'
+      })
       .otherwise({
         redirectTo: '/',
         caseInsensitiveMatch: true

@@ -23,14 +23,23 @@
 
   };
 
+  var leaderBoardCtrl = function($scope, User){
+    $scope.users = User.query();
+  };
+
   var mainCtrl = function($scope, $location) {
     //$scope.name = '';
     $scope.go = function ( path ) {
-      $location.path( path + '/'+$scope.name );
+      if($scope.name.indexOf('_') !== -1){
+        $location.path( path + '/'+$scope.name );
+      }else{
+        $location.path( path + '/'+$scope.name+'_'+Math.random().toString(36).substr(2, 5) );
+      }
     };
   };
 
-  var playCtrl = function($scope, $routeParams, Word) {
+  var playCtrl = function($scope, $location, $routeParams, $http, Word, User) {
+
     if(!$routeParams.pName){
       $location.path( '#/' );
     }
@@ -42,8 +51,12 @@
     Word.query().$promise.then(
       //Success
       function (data) {
-        $scope.wordsBd = data;
-        $scope.reset();
+        if(data.length <= 0){
+          $location.path( '/addWord' );
+        }else{
+          $scope.wordsBd = data;
+          $scope.reset();
+        }
       },
       //Error
       function (error) {
@@ -70,6 +83,42 @@
       });
     };
 
+    var checkPlayer = function(){
+      $http({method: 'GET', url: '/user?name='+$scope.player})
+        .success(function(data, status, headers, config) {
+          if(data.length > 0){
+            User.update({ id : data[0].id }, {
+              name: data[0].name,
+              wins: ($scope.win) ? data[0].wins+1 : data[0].wins,
+              losses: ($scope.lost) ? data[0].losses+1 : data[0].losses
+            }).$promise.then(
+              function (data) {
+                console.log('success', data);
+              },
+              function (error) {
+                console.log(error);
+              }
+            );
+          }else{
+            User.save({
+              name: $scope.player,
+              wins: ($scope.win) ? 1 : 0,
+              losses: ($scope.lost) ? 1 : 0
+            }).$promise.then(
+              function (data) {
+                console.log('success', data);
+              },
+              function (error) {
+                console.log(error);
+              }
+            );
+          }
+        })
+        .error(function(data, status, headers, config) {
+          console.log(data);
+        });
+    };
+
     var checkForEndOfGame = function() {
       $scope.win = _.reduce($scope.secretWord, function(acc, letter) {
         return acc && letter.chosen;
@@ -78,6 +127,9 @@
       if (!$scope.win && $scope.numMisses === $scope.missesAllowed) {
         $scope.lost = true;
         revealSecret();
+      }
+      if($scope.win || $scope.lost){
+        checkPlayer();
       }
     };
 
@@ -113,6 +165,7 @@
   angular
     .module('hangApp.controllers', ['hangApp.services'])
     .controller('addWordCtrl', addWordCtrl)
+    .controller('leaderBoardCtrl', leaderBoardCtrl)
     .controller('mainCtrl', mainCtrl)
     .controller('playCtrl', playCtrl);
 
